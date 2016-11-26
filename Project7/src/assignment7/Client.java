@@ -8,17 +8,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Client {
+public class Client implements Runnable {
 	
-	static int port = 8100; 
-
+	static int port = 8000; 
+	public static boolean closed = false;
+	public static Socket clientSocket = null;
+	public static DataInputStream inS = null;
+	public static PrintStream outS = null;
+	public static DataInputStream inputLine = null;
 	
 	public static void main(String[] args) {
 
-	    Socket clientSocket = null;
-	    DataInputStream inS = null;
-	    PrintStream outS = null;
-	    DataInputStream inputLine = null;
+	   
 
 	    
 	    try {
@@ -35,16 +36,10 @@ public class Client {
 	      try {
 
 	       
-	        System.out.println("Type 'Exit' to leave.");
-	        String responseLine;
-	        outS.println(inputLine.readLine());
-	        while ((responseLine = inS.readLine()) != null) {
-	          System.out.println(responseLine);
-	          if (responseLine.indexOf("Exit") != -1) {
-	            break;
+	    	  new Thread(new Client()).start();
+	          while (!closed) {
+	            outS.println(inputLine.readLine().trim());
 	          }
-	          outS.println(inputLine.readLine());
-	        }
 
 	        outS.close();
 	        inS.close();
@@ -54,6 +49,28 @@ public class Client {
 	      }
 	    }
 	  }
+
+
+	@Override
+	public void run() {
+		String response;
+		System.out.print("Type 'Exit' to leave chat");
+		try {
+			while ((response = inS.readLine()) != null) {
+				System.out.println(response);
+		        if (response.indexOf("Exit") != -1)
+		          break;
+			}
+		    closed = true;
+		}
+		catch (IOException e) {
+			System.err.println("IOException:  " + e);
+			}
+		
+	}
+	
+	
+	
 	
 
 }
