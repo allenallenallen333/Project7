@@ -1,18 +1,13 @@
 package assignment7;
 
 
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.text.AbstractDocument.Content;
-
-import assignment7.Chat.IncomingReader;
+import assignment7.ChatClient.IncomingReader;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,13 +29,13 @@ public class Chat extends Application{
 	private TextArea incoming;
 	private TextField outgoing;
 	
-	private static BufferedReader reader;
-	private static PrintWriter writer;
+	private BufferedReader reader;
+	private PrintWriter writer;
 	
 	
 	public void run(String[] hello) throws Exception {
-		launch(hello);
 		setUpNetworking();
+		launch();  		
 	}
 	
 	public void start(Stage primaryStage) {
@@ -53,16 +48,10 @@ public class Chat extends Application{
 		incoming.setEditable(false);
 		incoming.setWrapText(true);
 		
-		
 		ScrollPane scrollbar = new ScrollPane(incoming);
 		outgoing = new TextField();
 	    outgoing.setPrefWidth(500);
 		outgoing.setPromptText("Enter Your Message Here");
-		
-		
-	
-		
-		
 		
 		/*
 		 * 1. find out how to keep printing messages line by line
@@ -75,11 +64,14 @@ public class Chat extends Application{
 		Button send = new Button("Send");
 		send.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent e) {
-				writer.println(outgoing.getText());
-				writer.flush();
-				outgoing.setText("");
-				outgoing.requestFocus();
+			public void handle(ActionEvent e) {	
+				
+				if (outgoing.getText() != null && !outgoing.getText().isEmpty()){
+					writer.println(outgoing.getText());
+					writer.flush();
+					outgoing.setText("");
+					outgoing.requestFocus();
+				}
 			}
 		});
 		
@@ -108,19 +100,10 @@ public class Chat extends Application{
 		InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
 		reader = new BufferedReader(streamReader);
 		writer = new PrintWriter(sock.getOutputStream());
-		System.out.println("networking established");
-		IncomingReader a = new IncomingReader();
-		Thread readerThread = new Thread(a);
+		System.out.println("Connected to server");
+		Thread readerThread = new Thread(new IncomingReader());
 		readerThread.start();
 	}
-
-	/*class SendButtonListener implements ActionListener {
-		public void actionPerformed(ActionEvent ev) {
-			
-			outgoing.setText("");
-			outgoing.requestFocus();
-		}
-	}*/
 
 	public static void main(String[] args) {
 		try {
@@ -135,7 +118,6 @@ public class Chat extends Application{
 			String message;
 			try {
 				while ((message = reader.readLine()) != null) {
-					
 						incoming.appendText(message + "\n");
 				}
 			} catch (IOException ex) {
