@@ -8,7 +8,7 @@ public class ClientMain{
 		new Thread(new Runnable () {
 			@Override
 			public void run() {
-				client.runme();
+				client.run();
 			}
 		}).start();
 		
