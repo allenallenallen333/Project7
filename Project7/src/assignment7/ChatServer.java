@@ -21,17 +21,27 @@ public class ChatServer extends Observable {
 		ServerSocket serverSock = new ServerSocket(4242);
 		while (true) {
 			Socket clientSocket = serverSock.accept();
-			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());
+			// Our code
+			Userlist.Users.add(new User(clientSocket));
+			// Our code end
+			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());			
 			Thread t = new Thread(new ClientHandler(clientSocket));
 			t.start();
 			this.addObserver(writer);
-			System.out.println("got a connection");
+			System.out.println("Someone connected");
 		}
 	}
 	class ClientHandler implements Runnable {
 		private BufferedReader reader;
-
+		// Our code
+		private User user;
+		// Our code end
+		
 		public ClientHandler(Socket clientSocket) {
+			// Our code
+			user = Userlist.getUser(clientSocket);
+			// Our code end
+			
 			Socket sock = clientSocket;
 			try {
 				reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -44,7 +54,7 @@ public class ChatServer extends Observable {
 			String message;
 			try {
 				while ((message = reader.readLine()) != null) {
-					System.out.println("server read "+message);
+					System.out.println("Server read from " + user.clientId + " : " + message);
 					setChanged();
 					notifyObservers(message);
 				}
