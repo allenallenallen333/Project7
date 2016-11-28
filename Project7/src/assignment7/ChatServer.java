@@ -14,6 +14,7 @@ public class ChatServer extends Observable {
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
 			public void run(){
 				// Save user database
+				System.out.println("SHUT DOWN");
 				Userlist.writeToFile();
 			}
 		}));
@@ -113,6 +114,33 @@ public class ChatServer extends Observable {
 									thisWriter.flush();
 									System.out.println("Successfully logged in");
 								}
+							}
+						}
+						else if (message.startsWith("/signup ")){
+							
+							String str = message.substring(8, message.length());
+							String[] sArray = str.split(":");
+							String username = sArray[sArray.length - 2];
+							String password = sArray[sArray.length - 1];
+							
+							User u = Userlist.getUser(username);
+							
+							if (u != null){
+								thisWriter.println("username already exists");
+								thisWriter.flush();
+								System.out.println("username already exists");
+								stop();
+							}
+							else{
+
+								Userlist.addUser(username, password);
+								int id = Userlist.getIndex(username);
+								index = id;
+								Userlist.Users.get(id).socket = sock;
+								user = Userlist.Users.get(id);
+								thisWriter.println("signup success");
+								thisWriter.flush();
+								System.out.println("Successfully signed up and logged in");
 							}
 						}
 						else{

@@ -14,6 +14,11 @@ public class Userlist {
 
 	public static ArrayList<User> Users = new ArrayList<>();
 	
+	public static void addUser(String username, String password){
+		Users.add(new User(username, password));
+		writeToFile();
+	}
+	
 	public static User getUser(Socket sock){
 		int i = 0;
 		while(!Users.get(i).socket.equals(sock)){
@@ -78,6 +83,8 @@ public class Userlist {
 					}
 					sCurrentLine = br.readLine();
 				}
+				
+				br.close();
 			}
 		} catch (IOException e) {
 		}
@@ -89,7 +96,7 @@ public class Userlist {
 	 */
 	public static void writeToFile(){
 		String path = "./db.txt";
-
+		System.out.println("teststsete");
 		try  
 		{
 			PrintWriter w = new PrintWriter(path);

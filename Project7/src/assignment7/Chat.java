@@ -40,9 +40,6 @@ public class Chat extends Application{
 	public Stage logIn;
 	private static BufferedReader reader;
 	private static PrintWriter writer;
-
-	public static boolean hasRecieved = false;
-	public static boolean canProceed = false;
 	
 	public void start(Stage primaryStage) {
 		primary = primaryStage;
@@ -83,9 +80,9 @@ public class Chat extends Application{
 		grid.add(serverID, 3, 3);
 		grid.add(submit, 1, 5);
 		grid.add(new_user, 1, 7);
-		grid.add(warning, 1, 9);
+		grid.add(warning, 3, 9);
 		
-		Scene sceneLog = new Scene(grid, 300, 150);
+		Scene sceneLog = new Scene(grid, 320, 200);
 		logIn.setScene(sceneLog);
 		
 		logIn.show();
@@ -108,8 +105,8 @@ public class Chat extends Application{
 					// Thread readerThread = new Thread(new IncomingReader());
 					// readerThread.start();
 		
-					hasRecieved = false;
-					canProceed = false;
+					boolean hasRecieved = false;
+					boolean canProceed = false;
 					
 					while(!hasRecieved){
 						String message;
@@ -121,12 +118,75 @@ public class Chat extends Application{
 							else if (message.equals("wrong username")){
 								hasRecieved = true;
 								canProceed = false;
-								warning.setText("Please enter the right username");
+								warning.setText("No such username");
 							}
 							else if (message.equals("wrong password")){
 								hasRecieved = true;
 								canProceed = false;
-								warning.setText("Please enter the right password");
+								warning.setText("Incorrect password");
+							}
+						}
+					}
+					
+					if (canProceed){
+							
+						logIn.close();
+						primary.setTitle("Chat Room");
+						primary.setScene(scene);
+						primary.setWidth(750);
+						primary.setHeight(350);
+						primary.show();
+						
+						Thread readerThread = new Thread(new IncomingReader());
+						readerThread.start();
+					}
+					
+			        
+					
+				} catch (UnknownHostException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+			}
+		});
+		
+		new_user.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+						
+				@SuppressWarnings("resource")
+				Socket sock;
+				try {
+					sock = new Socket(serverID.getText(), 4242);
+					InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
+					reader = new BufferedReader(streamReader);
+					writer = new PrintWriter(sock.getOutputStream());
+					System.out.println("networking established");
+										
+					writer.println("/signup " + username.getText() + ":" + password.getText());
+					writer.flush();
+					
+					
+					// Thread readerThread = new Thread(new IncomingReader());
+					// readerThread.start();
+		
+					boolean hasRecieved = false;
+					boolean canProceed = false;
+					
+					while(!hasRecieved){
+						String message;
+						while (!hasRecieved && (message = reader.readLine()) != null) {
+							if (message.equals("signup success")){
+								hasRecieved = true;
+								canProceed = true;
+							}
+							else if (message.equals("username already exists")){
+								hasRecieved = true;
+								canProceed = false;
+								warning.setText("Username already exists");
 							}
 						}
 					}
