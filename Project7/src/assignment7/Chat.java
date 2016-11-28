@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -23,6 +25,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Chat extends Application{
@@ -45,6 +49,8 @@ public class Chat extends Application{
 		logIn = new Stage();
 		HBox hb = new HBox();
 		VBox vb = new VBox();
+		HBox hb1 = new HBox();
+		HBox hb2 = new HBox();
 		logIn.setTitle("Log into Chat!");
 		Scene scene = new Scene(group);
 		
@@ -120,8 +126,9 @@ public class Chat extends Application{
 					if (canProceed){
 							
 						logIn.close();
+						primary.setTitle("Chat Room");
 						primary.setScene(scene);
-						primary.setWidth(600);
+						primary.setWidth(750);
 						primary.setHeight(350);
 						primary.show();
 						
@@ -142,12 +149,28 @@ public class Chat extends Application{
 			}
 		});
 		
+		Label chat = new Label("Chat");
+		chat.setFont(Font.font("Cambria", 20));
+		chat.setTextFill(Color.AQUAMARINE);
+		Label userLabel = new Label("Users Online:");
+		userLabel.setFont(Font.font("Cambria", 20));
+		userLabel.setTextFill(Color.AQUAMARINE);
+		hb2.setSpacing(500);
+		hb2.getChildren().addAll(chat, userLabel);
 		
 		
 		
 		
-		
-	
+		ListView<String> online = new ListView<String>();
+		ObservableList<String> items = FXCollections.observableArrayList();
+		Userlist a = new Userlist();
+		a.readFromDatabase();
+		for (User b: a.Users) {
+			items.add(b.username);
+		}
+		online.setItems(items);
+		online.setPrefWidth(150);
+		online.setPrefHeight(70);
 		
 		incoming = new TextArea();
 		incoming.setEditable(false);
@@ -187,13 +210,16 @@ public class Chat extends Application{
 		hb.setSpacing(5);
 	    hb.setPadding(new Insets(10, 0, 0, 10));
 	    hb.getChildren().addAll(outgoing, send);
-
-		
+	    hb1.setSpacing(5);
+	    hb1.setPadding(new Insets(10, 0, 0, 10));
+	    hb1.getChildren().addAll(incoming, online);
+	    
 	    vb.setSpacing(5);
 	    vb.setPadding(new Insets(10, 0, 0, 10));
-	    vb.getChildren().addAll(incoming, hb);
+	    vb.getChildren().addAll(hb2, hb1, hb);
 		
 		group.getChildren().addAll(vb);
+		
 	    
 	}
 	
