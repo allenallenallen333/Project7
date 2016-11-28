@@ -153,19 +153,29 @@ public class Chat extends Application{
 			public void handle(ActionEvent e) {
 				try {
 
+					/*
 					output.writeUTF(outgoing.getText());
 					output.flush();
 					outgoing.setText("");
 					outgoing.requestFocus();
+					*/
 
 					if (outgoing.getText() != null && !outgoing.getText().isEmpty()){
+						
+						writer.println(outgoing.getText());
+						writer.flush();
+						outgoing.setText("");
+						outgoing.requestFocus();
+						
+						/*
 						output.writeUTF(outgoing.getText());
 						output.flush();
 						String message = input.readUTF();
 						incoming.appendText(message + '\n');
+						*/
 					}
 
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
@@ -197,9 +207,8 @@ public class Chat extends Application{
 		public void run() {
 			String message;
 			try {
-
-				while ((message = input.readUTF()) != null) {
-			
+				while ((message = reader.readLine()) != null) {
+					
 						incoming.appendText(message + "\n");
 				}
 			} catch (IOException ex) {
