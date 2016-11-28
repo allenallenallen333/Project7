@@ -71,13 +71,19 @@ public class Chat extends Application{
 		serverID.setPromptText("Enter the server address");
 		
 		Button submit = new Button("Enter Chat!");
+		Button new_user = new Button("Sign up!");
+		Label warning = new Label();
+		
+		
 		grid.add(ID, 1, 1);
 		grid.add(username, 3, 1);
 		grid.add(PW, 1, 2);
 		grid.add(password, 3, 2);
 		grid.add(serverIDL, 1, 3);
 		grid.add(serverID, 3, 3);
-		grid.add(submit, 1, 4);
+		grid.add(submit, 1, 5);
+		grid.add(new_user, 1, 7);
+		grid.add(warning, 1, 9);
 		
 		Scene sceneLog = new Scene(grid, 300, 150);
 		logIn.setScene(sceneLog);
@@ -115,10 +121,12 @@ public class Chat extends Application{
 							else if (message.equals("wrong username")){
 								hasRecieved = true;
 								canProceed = false;
+								warning.setText("Please enter the right username");
 							}
 							else if (message.equals("wrong password")){
 								hasRecieved = true;
 								canProceed = false;
+								warning.setText("Please enter the right password");
 							}
 						}
 					}
