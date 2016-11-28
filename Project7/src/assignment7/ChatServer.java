@@ -3,12 +3,21 @@ package assignment7;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Observable;
 
 public class ChatServer extends Observable {
 	public static void main(String[] args) {
+		Userlist.readFromDatabase();
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
+			public void run(){
+				// Save user database
+				Userlist.writeToFile();
+			}
+		}));
+		
 		try {
 			new ChatServer().setUpNetworking();
 		} catch (Exception e) {
@@ -34,18 +43,19 @@ public class ChatServer extends Observable {
 	class ClientHandler implements Runnable {
 		private BufferedReader reader;
 		// Our code
+		private Socket sock;
 		private User user;
 		// Our code end
 		
 		public ClientHandler(Socket clientSocket) {
 			// Our code
-			user = Userlist.getUser(clientSocket);
+			// user = Userlist.getUser(clientSocket);
 			// Our code end
 			
 			setChanged();
-			notifyObservers(user.name + " has joined the chat");
+			// notifyObservers(user.name + " has joined the chat");
 			
-			Socket sock = clientSocket;
+			sock = clientSocket;
 			try {
 				reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			} catch (IOException e) {
@@ -57,20 +67,19 @@ public class ChatServer extends Observable {
 			String message;
 			try {
 				while ((message = reader.readLine()) != null) {
-					System.out.println("Server read from " + user.clientId + " : " + message);
+					// System.out.println("Server read from " + user.clientId + " : " + message);
 					
-					if (message.startsWith("/name ")){
-						String newName = message.substring(6, message.length());
-						
-						message = user.name + " has changed his/her name to " + newName;
-						user.setName(newName);
-						
-						setChanged();
-						notifyObservers(message);
+					System.out.println("server read: " + message);
+					
+					PrintWriter tempWriter = new PrintWriter(sock.getOutputStream());
+					
+					if (message.startsWith("/login ")){
+						tempWriter.println("login success");
+						tempWriter.flush();
 					}
 					else{
 						setChanged();
-						notifyObservers(user.name + ": " + message);
+						notifyObservers(user.username + ": " + message);
 					}
 				}
 			} catch (IOException e) {

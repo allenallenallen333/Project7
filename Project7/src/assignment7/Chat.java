@@ -36,10 +36,9 @@ public class Chat extends Application{
 	public Stage logIn;
 	private static BufferedReader reader;
 	private static PrintWriter writer;
-	private String server;
-	private String user;
-	private DataOutputStream output = null;
-	private DataInputStream input = null;
+
+	public boolean hasRecieved = false;
+	public boolean canProceed = false;
 	
 	public void start(Stage primaryStage) {
 		primary = primaryStage;
@@ -50,51 +49,71 @@ public class Chat extends Application{
 		Scene scene = new Scene(group);
 		
 		
+		Label ID = new Label("Username: ");
 		
 		TextField username = new TextField();
-		Label ID = new Label("UserName: ");
-		TextField serverID = new TextField();
+		username.setPromptText("Enter your username");
+		
+		Label PW = new Label("Password: ");
+		
+		TextField password = new TextField();
+		password.setPromptText("Enter your password");
+		
 		Label serverIDL = new Label("Server IP: ");
-		username.setPromptText("Type in a username");
+		
+		TextField serverID = new TextField("127.0.0.1");
+		serverID.setPromptText("Enter the server address");
+		
 		Button submit = new Button("Enter Chat!");
 		grid.add(ID, 1, 1);
 		grid.add(username, 3, 1);
-		grid.add(serverIDL, 1, 2);
-		grid.add(serverID, 3, 2);
-		grid.add(submit, 1, 3);
+		grid.add(PW, 1, 2);
+		grid.add(password, 3, 2);
+		grid.add(serverIDL, 1, 3);
+		grid.add(serverID, 3, 3);
+		grid.add(submit, 1, 4);
 		
-		Scene sceneLog = new Scene(grid, 300, 100);
+		Scene sceneLog = new Scene(grid, 300, 150);
 		logIn.setScene(sceneLog);
 		
 		logIn.show();
 		submit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				//CHECK USERNAME
-				user = username.getText();
-				server = serverID.getText();
-				//IF USERNAME EXISTS THEN DO THIS:
-				
-				
-				logIn.close();
-				primary.setScene(scene);
-				primary.setWidth(600);
-				primary.setHeight(350);
-				primary.show();
-			
-				
+						
 				@SuppressWarnings("resource")
 				Socket sock;
 				try {
-					sock = new Socket(server, 4242);
+					sock = new Socket(serverID.getText(), 4242);
 					InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
 					reader = new BufferedReader(streamReader);
 					writer = new PrintWriter(sock.getOutputStream());
 					System.out.println("networking established");
+										
+					writer.println("/login " + username.getText() + ":" + password.getText());
+					writer.flush();
 					
-					input = new DataInputStream(sock.getInputStream());
-			        output = new DataOutputStream(sock.getOutputStream());
-			        Thread readerThread = new Thread(new IncomingReader());
+					
+					Thread readerThread = new Thread(new IncomingReader());
 					readerThread.start();
+		
+					
+					while(!hasRecieved){
+					}
+					
+					if (canProceed){
+						logIn.close();
+						primary.setScene(scene);
+						primary.setWidth(600);
+						primary.setHeight(350);
+						primary.show();
+					}
+					else{
+						sock.close();
+					}
+					
+					
+			        
+					
 				} catch (UnknownHostException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -175,7 +194,12 @@ public class Chat extends Application{
 			try {
 				while ((message = reader.readLine()) != null) {
 					
-						incoming.appendText(message + "\n");
+					if (message.equals("login success")){
+						hasRecieved = true;
+						canProceed = true;
+					}
+					
+					incoming.appendText(message + "\n");
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
