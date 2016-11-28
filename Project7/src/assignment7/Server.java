@@ -12,6 +12,10 @@ public class Server {
 	Socket socket;
 	
 	void runme() {
+		
+		UserDatabase.readFromDatabase();
+
+		
 		try {
 			// Create a server socket, and define in and out streams for it
 			server = new ServerSocket(port);
@@ -30,7 +34,7 @@ public class Server {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 	
 	

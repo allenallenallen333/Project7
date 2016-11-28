@@ -12,7 +12,7 @@ public class UserDatabase {
 	
 	public static ArrayList<User> Users = new ArrayList<>();
 	
-	class User{
+	public static class User{
 		String username;
 		String password;
 		
@@ -25,7 +25,7 @@ public class UserDatabase {
 	/**
 	 * Reads the user database text file and add the users into an ArrayList
 	 */
-	public void readFromDatabase(){
+	public static void readFromDatabase(){
 		String path = "./db.txt";
 		File dbFile = new File(path);
 		
@@ -34,14 +34,18 @@ public class UserDatabase {
 				// Did not successfully created blank file / Already has file
 				BufferedReader br = new BufferedReader(new FileReader(path));
 				
-				String sCurrentLine;
-
-				while ((sCurrentLine = br.readLine()) != null) {
-					String[] arr = sCurrentLine.split(",");
+				String sCurrentLine = br.readLine();
+				
+				while (sCurrentLine != null) {
 					
-					User user = new User(arr[arr.length - 2], arr[arr.length - 1]);
-					
-					Users.add(user);
+					if (!sCurrentLine.isEmpty()){
+						String[] arr = sCurrentLine.split(":");
+						
+						User user = new User(arr[arr.length - 2], arr[arr.length - 1]);
+						
+						Users.add(user);
+					}
+					sCurrentLine = br.readLine();
 				}
 			}
 		} catch (IOException e) {
@@ -53,7 +57,7 @@ public class UserDatabase {
 	 * @param username
 	 * @param password
 	 */
-	public void writeToDatabase(String username, String password){
+	public static void writeToDatabase(String username, String password){
 		String path = "./db.txt";
 		
 		BufferedWriter out = null;
@@ -70,6 +74,13 @@ public class UserDatabase {
 		    System.err.println("Error: " + e.getMessage());
 		}
 
+	}
+	
+	
+	public static void print(){
+		for(User u : Users){
+			System.out.println(u.username + ":" + u.password);
+		}
 	}
 
 }
