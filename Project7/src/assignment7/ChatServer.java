@@ -42,6 +42,9 @@ public class ChatServer extends Observable {
 			user = Userlist.getUser(clientSocket);
 			// Our code end
 			
+			setChanged();
+			notifyObservers(user.name + " has joined the chat");
+			
 			Socket sock = clientSocket;
 			try {
 				reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -55,8 +58,20 @@ public class ChatServer extends Observable {
 			try {
 				while ((message = reader.readLine()) != null) {
 					System.out.println("Server read from " + user.clientId + " : " + message);
-					setChanged();
-					notifyObservers(user.clientId + ": " + message);
+					
+					if (message.startsWith("/name ")){
+						String newName = message.substring(6, message.length());
+						
+						message = user.name + " has changed his/her name to " + newName;
+						user.setName(newName);
+						
+						setChanged();
+						notifyObservers(message);
+					}
+					else{
+						setChanged();
+						notifyObservers(user.name + ": " + message);
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
