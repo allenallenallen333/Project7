@@ -2,12 +2,24 @@ package assignment7;
 
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+<<<<<<< HEAD
 import assignment7.ChatClient.IncomingReader;
+=======
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument.Content;
+
+import assignment7.Chat.IncomingReader;
+import assignment7.ChatClient.SendButtonListener;
+>>>>>>> 54843f7b6f01bf24936de8bcb7ea71150478fb6b
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -31,6 +43,9 @@ public class Chat extends Application{
 	
 	private BufferedReader reader;
 	private PrintWriter writer;
+	
+	DataOutputStream output = null;
+	DataInputStream input = null;
 	
 	
 	public void run(String[] hello) throws Exception {
@@ -62,15 +77,20 @@ public class Chat extends Application{
 		 * 
 		 */
 		Button send = new Button("Send");
+		
+		
 		send.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent e) {	
-				
-				if (outgoing.getText() != null && !outgoing.getText().isEmpty()){
-					writer.println(outgoing.getText());
-					writer.flush();
-					outgoing.setText("");
-					outgoing.requestFocus();
+			public void handle(ActionEvent e) {
+				try {
+					if (outgoing.getText() != null && !outgoing.getText().isEmpty()){
+						output.writeUTF(outgoing.getText());
+						output.flush();
+						String message = input.readUTF();
+						incoming.appendText(message + '\n');
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
 			}
 		});
@@ -96,12 +116,24 @@ public class Chat extends Application{
 	
 	private void setUpNetworking() throws Exception {
 		@SuppressWarnings("resource")
+		
 		Socket sock = new Socket("127.0.0.1", 4242);
+<<<<<<< HEAD
 		InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
 		reader = new BufferedReader(streamReader);
 		writer = new PrintWriter(sock.getOutputStream());
 		System.out.println("Connected to server");
 		Thread readerThread = new Thread(new IncomingReader());
+=======
+		
+		input = new DataInputStream(sock.getInputStream());
+        output = new DataOutputStream(sock.getOutputStream());
+		
+		//writer = new PrintWriter(sock.getOutputStream());
+		System.out.println("networking established");
+		IncomingReader a = new IncomingReader();
+		Thread readerThread = new Thread(a);
+>>>>>>> 54843f7b6f01bf24936de8bcb7ea71150478fb6b
 		readerThread.start();
 	}
 
