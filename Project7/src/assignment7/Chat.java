@@ -16,19 +16,21 @@ import assignment7.Chat.IncomingReader;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.*;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Chat extends Application{
 	
-	private VBox chat = new VBox();
-	private GridPane grid = new GridPane();
+	private Group group = new Group();
 	private TextArea incoming;
 	private TextField outgoing;
 	
@@ -42,17 +44,24 @@ public class Chat extends Application{
 	}
 	
 	public void start(Stage primaryStage) {
+		HBox hb = new HBox();
+		VBox vb = new VBox();
 		
-		Scene scene = new Scene(grid);
-		primaryStage.setScene(scene);
-		primaryStage.show();
+		Scene scene = new Scene(group);
+		
+		incoming = new TextArea();
 		incoming.setEditable(false);
+		incoming.setWrapText(true);
+		
+		
 		ScrollPane scrollbar = new ScrollPane(incoming);
 		outgoing = new TextField();
+	    outgoing.setPrefWidth(500);
+		outgoing.setPromptText("Enter Your Message Here");
 		
 		
 	
-		Button send = new Button("Send");
+		
 		
 		
 		/*
@@ -63,17 +72,33 @@ public class Chat extends Application{
 		 * 4. create log-in window
 		 * 
 		 */
+		Button send = new Button("Send");
 		send.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				String message = outgoing.getText();
-				incoming.setText(message);
+				writer.println(outgoing.getText());
+				writer.flush();
+				outgoing.setText("");
+				outgoing.requestFocus();
 			}
 		});
 		
-		grid.add(incoming, 1, 1);
-		grid.add(outgoing, 1, 2);
-		grid.add(send, 2, 2);
+		
+		hb.setSpacing(5);
+	    hb.setPadding(new Insets(10, 0, 0, 10));
+	    hb.getChildren().addAll(outgoing, send);
+
+		
+	    vb.setSpacing(5);
+	    vb.setPadding(new Insets(10, 0, 0, 10));
+	    vb.getChildren().addAll(incoming, hb);
+		
+		group.getChildren().addAll(vb);
+	    
+		primaryStage.setScene(scene);
+		primaryStage.setWidth(600);
+		primaryStage.setHeight(350);
+		primaryStage.show();
 	
 	}
 	
@@ -91,8 +116,7 @@ public class Chat extends Application{
 
 	/*class SendButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
-			writer.println(outgoing.getText());
-			writer.flush();
+			
 			outgoing.setText("");
 			outgoing.requestFocus();
 		}
