@@ -161,14 +161,7 @@ public class Chat extends Application{
 	    outgoing.setPrefWidth(500);
 		outgoing.setPromptText("Enter Your Message Here");
 		
-		/*
-		 * 1. find out how to keep printing messages line by line
-		 * 2. figure out how to connect the thread and shit so that user name prints out with message
-		 * 		ex: user193 : hello!
-		 * 3. on the right hand side have a list of users that are currently in the chat room 
-		 * 4. create log-in window
-		 * 
-		 */
+
 		Button send = new Button("Send");
 		
 		
@@ -177,12 +170,14 @@ public class Chat extends Application{
 			public void handle(ActionEvent e) {
 				try {
 
+
 					if (outgoing.getText() != null && !outgoing.getText().isEmpty()){
 						
 						writer.println(outgoing.getText());
 						writer.flush();
 						outgoing.setText("");
 						outgoing.requestFocus();
+
 					}
 
 				} catch (Exception e1) {
