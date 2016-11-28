@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -35,26 +36,92 @@ import javafx.stage.Stage;
 public class Chat extends Application{
 	
 	private Group group = new Group();
+	private GridPane grid = new GridPane();
 	private TextArea incoming;
 	private TextField outgoing;
-	
+	public Stage primary;
+	public Stage logIn;
 	private static BufferedReader reader;
 	private static PrintWriter writer;
+	private String server;
+	private String user;
+	private DataOutputStream output = null;
+	private DataInputStream input = null;
 	
-	DataOutputStream output = null;
-	DataInputStream input = null;
 	
-	
-	public void run(String[] hello) throws Exception {
-		launch(hello);
-		setUpNetworking();
-	}
+
 	
 	public void start(Stage primaryStage) {
+		primary = primaryStage;
+		logIn = new Stage();
 		HBox hb = new HBox();
 		VBox vb = new VBox();
-		
+		logIn.setTitle("Log into Chat!");
 		Scene scene = new Scene(group);
+		
+		
+		
+		TextField username = new TextField();
+		Label ID = new Label("UserName: ");
+		TextField serverID = new TextField();
+		Label serverIDL = new Label("Server IP: ");
+		username.setPromptText("Type in a username");
+		Button submit = new Button("Enter Chat!");
+		grid.add(ID, 1, 1);
+		grid.add(username, 3, 1);
+		grid.add(serverIDL, 1, 2);
+		grid.add(serverID, 3, 2);
+		grid.add(submit, 1, 3);
+		
+		Scene sceneLog = new Scene(grid, 300, 100);
+		logIn.setScene(sceneLog);
+		
+		logIn.show();
+		submit.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				//CHECK USERNAME
+				user = username.getText();
+				server = serverID.getText();
+				//IF USERNAME EXISTS THEN DO THIS:
+				
+				
+				logIn.close();
+				primary.setScene(scene);
+				primary.setWidth(600);
+				primary.setHeight(350);
+				primary.show();
+			
+				
+				@SuppressWarnings("resource")
+				Socket sock;
+				try {
+					sock = new Socket(server, 4242);
+					InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
+					reader = new BufferedReader(streamReader);
+					writer = new PrintWriter(sock.getOutputStream());
+					System.out.println("networking established");
+					
+					input = new DataInputStream(sock.getInputStream());
+			        output = new DataOutputStream(sock.getOutputStream());
+			        Thread readerThread = new Thread(new IncomingReader());
+					readerThread.start();
+				} catch (UnknownHostException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+			}
+		});
+		
+		
+		
+		
+		
+		
+	
 		
 		incoming = new TextArea();
 		incoming.setEditable(false);
@@ -88,8 +155,8 @@ public class Chat extends Application{
 				try {
 					output.writeUTF(outgoing.getText());
 					output.flush();
-					String message = input.readUTF();
-					incoming.appendText(message + '\n');
+					outgoing.setText("");
+					outgoing.requestFocus();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -108,27 +175,9 @@ public class Chat extends Application{
 		
 		group.getChildren().addAll(vb);
 	    
-		primaryStage.setScene(scene);
-		primaryStage.setWidth(600);
-		primaryStage.setHeight(350);
-		primaryStage.show();
-	
 	}
 	
-	private void setUpNetworking() throws Exception {
-		@SuppressWarnings("resource")
-		
-		Socket sock = new Socket("127.0.0.1", 4242);
-		
-		input = new DataInputStream(sock.getInputStream());
-        output = new DataOutputStream(sock.getOutputStream());
-		
-		//writer = new PrintWriter(sock.getOutputStream());
-		System.out.println("networking established");
-		IncomingReader a = new IncomingReader();
-		Thread readerThread = new Thread(a);
-		readerThread.start();
-	}
+	
 
 	/*class SendButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
@@ -139,19 +188,15 @@ public class Chat extends Application{
 	}*/
 
 	public static void main(String[] args) {
-		try {
-			new Chat().run(args);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		launch(args);
 	}
 	
 	class IncomingReader implements Runnable {
 		public void run() {
 			String message;
 			try {
-				while ((message = reader.readLine()) != null) {
-					
+				while ((message = input.readUTF()) != null) {
+						
 						incoming.appendText(message + "\n");
 				}
 			} catch (IOException ex) {
