@@ -57,12 +57,12 @@ public class Chat extends Application{
 		
 		Label ID = new Label("Username: ");
 		
-		TextField username = new TextField();
+		TextField username = new TextField("Allen");
 		username.setPromptText("Enter your username");
 		
 		Label PW = new Label("Password: ");
 		
-		TextField password = new TextField();
+		TextField password = new TextField("1234");
 		password.setPromptText("Enter your password");
 		
 		Label serverIDL = new Label("Server IP: ");
@@ -236,23 +236,6 @@ public class Chat extends Application{
 			String message;
 			try {
 				while ((message = reader.readLine()) != null) {
-					
-					/*
-					if (message.equals("login success")){
-						hasRecieved = true;
-						canProceed = true;
-					}
-					else if (message.equals("wrong username")){
-						hasRecieved = true;
-						canProceed = false;
-					}
-					else if (message.equals("wrong password")){
-						hasRecieved = true;
-						canProceed = false;
-					}
-					else{
-						
-					}*/
 					
 					incoming.appendText(message + "\n");
 					
