@@ -19,7 +19,7 @@ public class ChatClient {
 	}
 
 	private void initView() {
-		JFrame frame = new JFrame("Ludicrously Simple Chat Client");
+		JFrame frame = new JFrame("Chat Client");
 		JPanel mainPanel = new JPanel();
 		incoming = new JTextArea(15, 50);
 		incoming.setLineWrap(true);
@@ -53,10 +53,13 @@ public class ChatClient {
 
 	class SendButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent ev) {
-			writer.println(outgoing.getText());
-			writer.flush();
-			outgoing.setText("");
-			outgoing.requestFocus();
+			
+			if (outgoing.getText() != null && !outgoing.getText().isEmpty()){
+				writer.println(outgoing.getText());
+				writer.flush();
+				outgoing.setText("");
+				outgoing.requestFocus();
+			}
 		}
 	}
 

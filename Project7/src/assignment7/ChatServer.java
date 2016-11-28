@@ -55,8 +55,17 @@ public class ChatServer extends Observable {
 			try {
 				while ((message = reader.readLine()) != null) {
 					System.out.println("Server read from " + user.clientId + " : " + message);
-					setChanged();
-					notifyObservers(user.clientId + ": " + message);
+					
+					if (message.startsWith("/name ")){
+						user.setName(message.substring(6, message.length()));
+					}
+					else{
+						setChanged();
+						notifyObservers(user.name + ": " + message);
+					}
+					
+					
+					
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
