@@ -6,9 +6,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Observable;
 
 public class ChatServer extends Observable {
+	
+	public static ArrayList<GroupChat> allObserv = new ArrayList<GroupChat>();
+	
 	public static void main(String[] args) {
 		Userlist.readFromDatabase();
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
@@ -31,9 +35,6 @@ public class ChatServer extends Observable {
 		ServerSocket serverSock = new ServerSocket(4242);
 		while (true) {
 			Socket clientSocket = serverSock.accept();
-			// Our code
-			// Userlist.Users.add(new User(clientSocket));
-			// Our code end
 			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());			
 			Thread t = new Thread(new ClientHandler(clientSocket));
 			t.start();
@@ -142,6 +143,32 @@ public class ChatServer extends Observable {
 								thisWriter.flush();
 								System.out.println("Successfully signed up and logged in");
 							}
+						}
+						else if (message.startsWith("/groupchat ")){
+							String str = message.substring("/groupchat ".length(), message.length());
+							String[] sArray = str.split(":");
+							
+							ArrayList<String> usernames = new ArrayList<String>();
+							
+							for(int i = 0; i < sArray.length; i++){
+								if (!sArray[i].isEmpty()){
+									usernames.add(sArray[i]);
+								}
+							}
+							
+							User thisUser = Userlist.getUser(sock);
+							usernames.add(thisUser.username);
+							
+							Observable observable = new ChatServer();
+							
+							for(String s : usernames){
+								User u = Userlist.getUser(s);
+								
+								ClientObserver writer = new ClientObserver(u.socket.getOutputStream());			
+								observable.addObserver(writer);
+							}
+							
+							allObserv.add(new GroupChat(observable, usernames));
 						}
 						else{
 							setChanged();

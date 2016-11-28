@@ -133,8 +133,8 @@ public class Chat extends Application{
 						logIn.close();
 						primary.setTitle("Chat Room");
 						primary.setScene(scene);
-						primary.setWidth(750);
-						primary.setHeight(350);
+						primary.setWidth(800);
+						primary.setHeight(400);
 						primary.show();
 						
 						Thread readerThread = new Thread(new IncomingReader());
@@ -196,8 +196,8 @@ public class Chat extends Application{
 						logIn.close();
 						primary.setTitle("Chat Room");
 						primary.setScene(scene);
-						primary.setWidth(750);
-						primary.setHeight(350);
+						primary.setWidth(800);
+						primary.setHeight(400);
 						primary.show();
 						
 						Thread readerThread = new Thread(new IncomingReader());
