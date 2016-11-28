@@ -10,16 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-
-import assignment7.ChatClient.IncomingReader;
-
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.text.AbstractDocument.Content;
-
-import assignment7.ChatClient.SendButtonListener;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -50,11 +40,6 @@ public class Chat extends Application{
 	private String user;
 	private DataOutputStream output = null;
 	private DataInputStream input = null;
-	
-	
-
-
-
 	
 	public void start(Stage primaryStage) {
 		primary = primaryStage;
@@ -153,26 +138,12 @@ public class Chat extends Application{
 			public void handle(ActionEvent e) {
 				try {
 
-					/*
-					output.writeUTF(outgoing.getText());
-					output.flush();
-					outgoing.setText("");
-					outgoing.requestFocus();
-					*/
-
 					if (outgoing.getText() != null && !outgoing.getText().isEmpty()){
 						
 						writer.println(outgoing.getText());
 						writer.flush();
 						outgoing.setText("");
 						outgoing.requestFocus();
-						
-						/*
-						output.writeUTF(outgoing.getText());
-						output.flush();
-						String message = input.readUTF();
-						incoming.appendText(message + '\n');
-						*/
 					}
 
 				} catch (Exception e1) {
