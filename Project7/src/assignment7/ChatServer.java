@@ -45,6 +45,7 @@ public class ChatServer extends Observable {
 		// Our code
 		private Socket sock;
 		private User user;
+		private int index;
 		// Our code end
 		
 		public ClientHandler(Socket clientSocket) {
@@ -71,6 +72,7 @@ public class ChatServer extends Observable {
 
 		public void run() {
 			if (canRun){
+				
 				String message;
 				try {
 					while ((message = reader.readLine()) != null) {
@@ -93,15 +95,18 @@ public class ChatServer extends Observable {
 								thisWriter.println("wrong username");
 								thisWriter.flush();
 								System.out.println("Wrong username");
+								stop();
 							}
 							else{
 								if (!u.password.equals(password)){
 									thisWriter.println("wrong password");
 									thisWriter.flush();
 									System.out.println("Wrong password");
+									stop();
 								}
 								else{
 									int id = Userlist.getIndex(username);
+									index = id;
 									Userlist.Users.get(id).socket = sock;
 									user = Userlist.Users.get(id);
 									thisWriter.println("login success");
@@ -116,8 +121,10 @@ public class ChatServer extends Observable {
 						}
 						
 					}
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					Userlist.Users.get(index).socket = null;
+					System.out.println(user.username + " has disconnected");
+					stop();
 				}
 			}
 			

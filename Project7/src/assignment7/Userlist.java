@@ -42,6 +42,16 @@ public class Userlist {
 		
 		return -1;
 	}
+	
+	public static ArrayList<User> onlineUsers(){
+		ArrayList<User> users = new ArrayList<User>();
+		for(User u: Users){
+			if (u.socket != null){
+				users.add(u);
+			}
+		}
+		return users;
+	}
 
 	/**
 	 * Reads the user database text file and add the users into an ArrayList

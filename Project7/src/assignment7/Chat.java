@@ -128,9 +128,6 @@ public class Chat extends Application{
 						Thread readerThread = new Thread(new IncomingReader());
 						readerThread.start();
 					}
-					else{
-						sock.close();
-					}
 					
 			        
 					
