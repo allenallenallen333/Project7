@@ -11,16 +11,15 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-<<<<<<< HEAD
+
 import assignment7.ChatClient.IncomingReader;
-=======
+
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument.Content;
 
-import assignment7.Chat.IncomingReader;
 import assignment7.ChatClient.SendButtonListener;
->>>>>>> 54843f7b6f01bf24936de8bcb7ea71150478fb6b
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -55,18 +54,6 @@ public class Chat extends Application{
 	
 
 
-	
-	private BufferedReader reader;
-	private PrintWriter writer;
-	
-	DataOutputStream output = null;
-	DataInputStream input = null;
-	
-	
-	public void run(String[] hello) throws Exception {
-		setUpNetworking();
-		launch();  		
-	}
 
 	
 	public void start(Stage primaryStage) {
@@ -199,28 +186,7 @@ public class Chat extends Application{
 	}
 	
 
-	private void setUpNetworking() throws Exception {
-		@SuppressWarnings("resource")
-		
-		Socket sock = new Socket("127.0.0.1", 4242);
 
-		InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
-		reader = new BufferedReader(streamReader);
-		writer = new PrintWriter(sock.getOutputStream());
-		System.out.println("Connected to server");
-		Thread readerThread = new Thread(new IncomingReader());
-
-		
-		input = new DataInputStream(sock.getInputStream());
-        output = new DataOutputStream(sock.getOutputStream());
-		
-		//writer = new PrintWriter(sock.getOutputStream());
-		System.out.println("networking established");
-		IncomingReader a = new IncomingReader();
-		Thread readerThread = new Thread(a);
-
-		readerThread.start();
-	}
 
 
 	public static void main(String[] args) {
