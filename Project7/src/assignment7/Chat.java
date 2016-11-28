@@ -96,8 +96,8 @@ public class Chat extends Application{
 					// Thread readerThread = new Thread(new IncomingReader());
 					// readerThread.start();
 		
-					// hasRecieved = false;
-					// canProceed = false;
+					hasRecieved = false;
+					canProceed = false;
 					
 					while(!hasRecieved){
 						String message;
