@@ -31,7 +31,7 @@ public class ChatServer extends Observable {
 		while (true) {
 			Socket clientSocket = serverSock.accept();
 			// Our code
-			Userlist.Users.add(new User(clientSocket));
+			// Userlist.Users.add(new User(clientSocket));
 			// Our code end
 			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());			
 			Thread t = new Thread(new ClientHandler(clientSocket));
@@ -62,29 +62,66 @@ public class ChatServer extends Observable {
 				e.printStackTrace();
 			}
 		}
+		
+		private boolean canRun = true;
+		
+		public void stop(){
+			canRun = false;
+		}
 
 		public void run() {
-			String message;
-			try {
-				while ((message = reader.readLine()) != null) {
-					// System.out.println("Server read from " + user.clientId + " : " + message);
-					
-					System.out.println("server read: " + message);
-					
-					PrintWriter tempWriter = new PrintWriter(sock.getOutputStream());
-					
-					if (message.startsWith("/login ")){
-						tempWriter.println("login success");
-						tempWriter.flush();
+			if (canRun){
+				String message;
+				try {
+					while ((message = reader.readLine()) != null) {
+						// System.out.println("Server read from " + user.clientId + " : " + message);
+						
+						System.out.println("server read: " + message);
+						
+						PrintWriter thisWriter = new PrintWriter(sock.getOutputStream());
+						
+						if (message.startsWith("/login ")){
+							
+							String str = message.substring(7, message.length());
+							String[] sArray = str.split(":");
+							String username = sArray[sArray.length - 2];
+							String password = sArray[sArray.length - 1];
+							
+							User u = Userlist.getUser(username);
+							
+							if (u == null){
+								thisWriter.println("wrong username");
+								thisWriter.flush();
+								System.out.println("Wrong username");
+							}
+							else{
+								if (!u.password.equals(password)){
+									thisWriter.println("wrong password");
+									thisWriter.flush();
+									System.out.println("Wrong password");
+								}
+								else{
+									int id = Userlist.getIndex(username);
+									Userlist.Users.get(id).socket = sock;
+									user = Userlist.Users.get(id);
+									thisWriter.println("login success");
+									thisWriter.flush();
+									System.out.println("Successfully logged in");
+								}
+							}
+						}
+						else{
+							setChanged();
+							notifyObservers(user.username + ": " + message);
+						}
+						
 					}
-					else{
-						setChanged();
-						notifyObservers(user.username + ": " + message);
-					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+			
+			
 		}
 	}
 }

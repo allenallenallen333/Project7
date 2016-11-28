@@ -37,8 +37,8 @@ public class Chat extends Application{
 	private static BufferedReader reader;
 	private static PrintWriter writer;
 
-	public boolean hasRecieved = false;
-	public boolean canProceed = false;
+	public static boolean hasRecieved = false;
+	public static boolean canProceed = false;
 	
 	public void start(Stage primaryStage) {
 		primary = primaryStage;
@@ -93,24 +93,44 @@ public class Chat extends Application{
 					writer.flush();
 					
 					
-					Thread readerThread = new Thread(new IncomingReader());
-					readerThread.start();
+					// Thread readerThread = new Thread(new IncomingReader());
+					// readerThread.start();
 		
+					// hasRecieved = false;
+					// canProceed = false;
 					
 					while(!hasRecieved){
+						String message;
+						while (!hasRecieved && (message = reader.readLine()) != null) {
+							if (message.equals("login success")){
+								hasRecieved = true;
+								canProceed = true;
+							}
+							else if (message.equals("wrong username")){
+								hasRecieved = true;
+								canProceed = false;
+							}
+							else if (message.equals("wrong password")){
+								hasRecieved = true;
+								canProceed = false;
+							}
+						}
 					}
 					
 					if (canProceed){
+							
 						logIn.close();
 						primary.setScene(scene);
 						primary.setWidth(600);
 						primary.setHeight(350);
 						primary.show();
+						
+						Thread readerThread = new Thread(new IncomingReader());
+						readerThread.start();
 					}
 					else{
 						sock.close();
 					}
-					
 					
 			        
 					
@@ -199,12 +219,25 @@ public class Chat extends Application{
 			try {
 				while ((message = reader.readLine()) != null) {
 					
+					/*
 					if (message.equals("login success")){
 						hasRecieved = true;
 						canProceed = true;
 					}
+					else if (message.equals("wrong username")){
+						hasRecieved = true;
+						canProceed = false;
+					}
+					else if (message.equals("wrong password")){
+						hasRecieved = true;
+						canProceed = false;
+					}
+					else{
+						
+					}*/
 					
 					incoming.appendText(message + "\n");
+					
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();

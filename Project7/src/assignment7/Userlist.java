@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public class Userlist {
 
 	public static ArrayList<User> Users = new ArrayList<>();
-	public static int ids = 0;
 	
 	public static User getUser(Socket sock){
 		int i = 0;
@@ -24,7 +23,25 @@ public class Userlist {
 		return Users.get(i);
 	}
 	
+	public static User getUser(String username){
+		for(User u: Users){
+			if (u.username.equals(username)){
+				return u;
+			}
+		}
+		
+		return null;
+	}
 	
+	public static int getIndex(String username){
+		for(int i = 0; i < Users.size(); i++){
+			if (Users.get(i).username.equals(username)){
+				return i;
+			}
+		}
+		
+		return -1;
+	}
 
 	/**
 	 * Reads the user database text file and add the users into an ArrayList
