@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class Chat extends Application{
+public class ClientMain extends Application{
 	
 	private Group group = new Group();
 	private GridPane grid = new GridPane();
@@ -69,7 +69,9 @@ public class Chat extends Application{
 		
 		Button submit = new Button("Enter Chat!");
 		Button new_user = new Button("Sign up!");
+		
 		Label warning = new Label();
+		warning.setTextFill(Color.RED);
 		
 		
 		grid.add(ID, 1, 1);
@@ -131,9 +133,9 @@ public class Chat extends Application{
 					if (canProceed){
 							
 						logIn.close();
-						primary.setTitle("Chat Room");
+						primary.setTitle("Chat Room: Signed in as " + username.getText());
 						primary.setScene(scene);
-						primary.setWidth(800);
+						primary.setWidth(700);
 						primary.setHeight(400);
 						primary.show();
 						
@@ -194,9 +196,9 @@ public class Chat extends Application{
 					if (canProceed){
 							
 						logIn.close();
-						primary.setTitle("Chat Room");
+						primary.setTitle("Chat Room: Signed in as " + username.getText());
 						primary.setScene(scene);
-						primary.setWidth(800);
+						primary.setWidth(700);
 						primary.setHeight(400);
 						primary.show();
 						
@@ -217,6 +219,7 @@ public class Chat extends Application{
 			}
 		});
 		
+		/*
 		Label chat = new Label("Chat");
 		chat.setFont(Font.font("Cambria", 20));
 		chat.setTextFill(Color.AQUAMARINE);
@@ -239,6 +242,8 @@ public class Chat extends Application{
 		online.setItems(items);
 		online.setPrefWidth(150);
 		online.setPrefHeight(70);
+		*/
+		
 		
 		incoming = new TextArea();
 		incoming.setEditable(false);
@@ -280,7 +285,7 @@ public class Chat extends Application{
 	    hb.getChildren().addAll(outgoing, send);
 	    hb1.setSpacing(5);
 	    hb1.setPadding(new Insets(10, 0, 0, 10));
-	    hb1.getChildren().addAll(incoming, online);
+	    hb1.getChildren().addAll(incoming);
 	    
 	    vb.setSpacing(5);
 	    vb.setPadding(new Insets(10, 0, 0, 10));
