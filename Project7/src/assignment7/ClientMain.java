@@ -136,7 +136,7 @@ public class ClientMain extends Application{
 						logIn.close();
 						primary.setTitle("Chat Room: Signed in as " + username.getText());
 						primary.setScene(scene);
-						primary.setWidth(700);
+						primary.setWidth(800);
 						primary.setHeight(400);
 						primary.show();
 						
@@ -259,10 +259,14 @@ public class ClientMain extends Application{
 		GridPane groupchat = new GridPane();
 		TextField groupText = new TextField();
 		Label label1 = new Label("Enter who you want to talk to!");
+		Label message = new Label("Write your message:");
+		TextField groupmessage = new TextField();
 		Button send2 = new Button("Send message!");
 		groupchat.add(label1, 1, 1);
 		groupchat.add(groupText, 1, 2);
-		groupchat.add(send2, 1, 3);
+		groupchat.add(message, 1, 3);
+		groupchat.add(groupmessage, 1, 4);
+		groupchat.add(send2, 1, 5);
 		Scene g = new Scene(groupchat);
 		Stage groupM = new Stage();
 		groupM.setScene(g);
@@ -283,7 +287,7 @@ public class ClientMain extends Application{
 				try {
 					if (groupText.getText() != null && !groupText.getText().isEmpty()){
 						
-						writer.println("/chat " + groupText.getText());
+						writer.println("/chat " + groupText.getText() + " " + groupmessage.getText());
 						writer.flush();
 						groupText.setText("");
 						groupText.requestFocus();
