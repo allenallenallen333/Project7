@@ -73,6 +73,7 @@ public class ClientMain extends Application{
 		Label warning = new Label();
 		warning.setTextFill(Color.RED);
 		
+	
 		
 		grid.add(ID, 1, 1);
 		grid.add(username, 3, 1);
@@ -198,9 +199,10 @@ public class ClientMain extends Application{
 						logIn.close();
 						primary.setTitle("Chat Room: Signed in as " + username.getText());
 						primary.setScene(scene);
-						primary.setWidth(700);
+						primary.setWidth(800);
 						primary.setHeight(400);
 						primary.show();
+						
 						
 						Thread readerThread = new Thread(new IncomingReader());
 						readerThread.start();
@@ -248,14 +250,56 @@ public class ClientMain extends Application{
 		incoming = new TextArea();
 		incoming.setEditable(false);
 		incoming.setWrapText(true);
-		
+		incoming.setPrefWidth(700);
 		ScrollPane scrollbar = new ScrollPane(incoming);
 		outgoing = new TextField();
 	    outgoing.setPrefWidth(500);
 		outgoing.setPromptText("Enter Your Message Here");
 		
+		GridPane groupchat = new GridPane();
+		TextField groupText = new TextField();
+		Label label1 = new Label("Enter who you want to talk to!");
+		Button send2 = new Button("Send message!");
+		groupchat.add(label1, 1, 1);
+		groupchat.add(groupText, 1, 2);
+		groupchat.add(send2, 1, 3);
+		Scene g = new Scene(groupchat);
+		Stage groupM = new Stage();
+		groupM.setScene(g);
+		
+		
+		
+		
+		Button groupB = new Button("Private Message");
+		
+		groupB.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				groupM.show();	
+			}
+		});
+		
+		send2.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				try {
+					if (groupText.getText() != null && !groupText.getText().isEmpty()){
+						
+						writer.println("/chat " + groupText.getText());
+						writer.flush();
+						groupText.setText("");
+						groupText.requestFocus();
 
-		Button send = new Button("Send");
+					}
+
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+				groupM.close();
+			}
+		});
+		
+
+		Button send = new Button("Send All");
 		
 		
 		send.setOnAction(new EventHandler<ActionEvent>() {
@@ -282,7 +326,7 @@ public class ClientMain extends Application{
 		
 		hb.setSpacing(5);
 	    hb.setPadding(new Insets(10, 0, 0, 10));
-	    hb.getChildren().addAll(outgoing, send);
+	    hb.getChildren().addAll(outgoing, send, groupB);
 	    hb1.setSpacing(5);
 	    hb1.setPadding(new Insets(10, 0, 0, 10));
 	    hb1.getChildren().addAll(incoming);
