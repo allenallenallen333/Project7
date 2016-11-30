@@ -199,8 +199,8 @@ public class ClientMain extends Application{
 						logIn.close();
 						primary.setTitle("Chat Room: Signed in as " + username.getText());
 						primary.setScene(scene);
-						primary.setWidth(800);
-						primary.setHeight(400);
+						primary.setWidth(775);
+						primary.setHeight(350);
 						primary.show();
 						
 						
@@ -221,14 +221,14 @@ public class ClientMain extends Application{
 			}
 		});
 		
-		/*
-		Label chat = new Label("Chat");
+		
+		Label chat = new Label("Chat:");
 		chat.setFont(Font.font("Cambria", 20));
 		chat.setTextFill(Color.AQUAMARINE);
 		Label userLabel = new Label("Users Online:");
 		userLabel.setFont(Font.font("Cambria", 20));
 		userLabel.setTextFill(Color.AQUAMARINE);
-		hb2.setSpacing(500);
+		hb2.setSpacing(490);
 		hb2.getChildren().addAll(chat, userLabel);
 		
 		
@@ -242,15 +242,15 @@ public class ClientMain extends Application{
 			items.add(b.username);
 		}
 		online.setItems(items);
-		online.setPrefWidth(150);
+		online.setPrefWidth(185);
 		online.setPrefHeight(70);
-		*/
+	
 		
 		
 		incoming = new TextArea();
 		incoming.setEditable(false);
 		incoming.setWrapText(true);
-		incoming.setPrefWidth(700);
+		incoming.setPrefWidth(500);
 		ScrollPane scrollbar = new ScrollPane(incoming);
 		outgoing = new TextField();
 	    outgoing.setPrefWidth(500);
@@ -333,13 +333,14 @@ public class ClientMain extends Application{
 	    hb.getChildren().addAll(outgoing, send, groupB);
 	    hb1.setSpacing(5);
 	    hb1.setPadding(new Insets(10, 0, 0, 10));
-	    hb1.getChildren().addAll(incoming);
+	    hb1.getChildren().addAll(incoming, online);
 	    
 	    vb.setSpacing(5);
 	    vb.setPadding(new Insets(10, 0, 0, 10));
 	    vb.getChildren().addAll(hb2, hb1, hb);
 		
 		group.getChildren().addAll(vb);
+
 		
 	    
 	}
